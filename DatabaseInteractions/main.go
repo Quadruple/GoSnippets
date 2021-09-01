@@ -48,6 +48,15 @@ func ReadAllAlbums(rows *sql.Rows) *[]Album {
 	return &allAlbums
 }
 
+func InsertAnAlbum(db *sql.DB, album *Album) error {
+	_, err := db.Exec("INSERT INTO album (title, artist, price) VALUES ($1, $2, $3)", album.title, album.artist, album.price)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+	return nil
+}
+
 func main() {
 	connStr := "user=<your-db-user> password='<your-db-password>' dbname=<your-db-name>"
 	db, err := sql.Open("postgres", connStr)
@@ -59,5 +68,17 @@ func main() {
 	cols := GetColumns(rows)
 	fmt.Println(cols)
 	allAlbums := ReadAllAlbums(rows)
+	fmt.Println(allAlbums)
+
+	newAlbum := Album{
+		title:  "A Love Supreme",
+		artist: "John Coltrane",
+		price:  199.82,
+	}
+	err = InsertAnAlbum(db, &newAlbum)
+	if err != nil {
+		log.Fatal(err)
+	}
+	allAlbums = ReadAllAlbums(rows)
 	fmt.Println(allAlbums)
 }
