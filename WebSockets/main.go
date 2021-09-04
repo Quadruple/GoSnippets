@@ -18,6 +18,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("Failed to set websocket upgrade! %+v", err)
 	}
+	defer conn.Close()
 	for {
 		t, msg, err := conn.ReadMessage()
 		if err != nil {
